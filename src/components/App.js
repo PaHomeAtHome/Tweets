@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { UserList } from "./UserList/UserList";
 
 function App() {
   const fetchUserData = () => {
@@ -18,15 +19,7 @@ function App() {
   const [users, setUsers] = useState([]);
 
   return (
-    <div className="App">
-      {users.length > 0 && (
-        <ul>
-          {users.map((user) => (
-            <li key={user.id}>{user.user}</li>
-          ))}
-        </ul>
-      )}
-    </div>
+    <div className="App">{users.length > 0 && <UserList users={users} />}</div>
   );
 }
 
