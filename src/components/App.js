@@ -3,7 +3,59 @@ import { UserList } from "./UserList/UserList";
 const apiUrl = "https://6436fa4b3e4d2b4a12e09fd0.mockapi.io/api/users";
 
 function App() {
+  const limit = 9;
+
   const fetchUserData = async () => {
+    try {
+      const response = await fetch(apiUrl + `?page=${page}&limit=${limit}`, {
+        method: "GET",
+        headers: { "content-type": "application/json" },
+      });
+      if (!response.ok) {
+        throw new Error(
+          `This is an HTTP error: The status is ${response.status}`
+        );
+      }
+      const data = await response.json();
+      !users
+        ? setUsers(data)
+        : setUsers((prevState) => [...prevState, ...data]);
+      setPage(page + 1);
+      setError(null);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const updateUser = async (id) => {
+    try {
+      const response = await fetch(apiUrl + `/${id}`, {
+        method: "GET",
+        headers: { "content-type": "application/json" },
+      });
+      if (!response.ok) {
+        throw new Error(
+          `This is an HTTP error: The status is ${response.status}`
+        );
+      }
+
+      const data = await response.json();
+      const usersCopy = [...users];
+      const index = users.findIndex((user) => user.id === id);
+      // const newUser = users[index];
+      // newUser.isFollowing = data.isFollowing;
+      usersCopy[index] = data;
+      setUsers(usersCopy);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const getUserCount = async () => {
     try {
       const response = await fetch(apiUrl, {
         method: "GET",
@@ -14,14 +66,11 @@ function App() {
           `This is an HTTP error: The status is ${response.status}`
         );
       }
-      let data = await response.json();
-      setUsers(data);
-      setError(null);
+      const data = await response.json();
+      setUserCount(data.length);
     } catch (err) {
-      setError(err.message);
-      setUsers(null);
-    } finally {
-      setLoading(false);
+      console.log(err);
+      setUserCount(null);
     }
   };
 
@@ -45,19 +94,22 @@ function App() {
         );
       })
       .then(() => {
-        fetchUserData();
+        updateUser(id);
       })
       .catch((error) => {
         console.log(error);
       });
   };
 
-  const [users, setUsers] = useState([]);
+  const [users, setUsers] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [UserCount, setUserCount] = useState(null);
+  const [page, setPage] = useState(1);
 
   useEffect(() => {
     fetchUserData();
+    getUserCount();
   }, []);
 
   return (
@@ -67,6 +119,9 @@ function App() {
         <UserList users={users} changeFollowing={changeFollowing} />
       )}
       {error && <p>{error}</p>}
+      {Math.ceil(UserCount / limit) >= page && (
+        <button onClick={() => fetchUserData()}>Load more</button>
+      )}
     </div>
   );
 }
