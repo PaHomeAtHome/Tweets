@@ -1,5 +1,8 @@
+import { Container } from "./Container/Container";
 import { useEffect, useState } from "react";
 import { UserList } from "./UserList/UserList";
+import { LoadMoreButton } from "./LoadMoreButton/LoadMoreButton";
+import { Loader } from "./Loader/Loader";
 const apiUrl = "https://6436fa4b3e4d2b4a12e09fd0.mockapi.io/api/users";
 
 function App() {
@@ -7,6 +10,7 @@ function App() {
 
   const fetchUserData = async () => {
     try {
+      setLoading(true);
       const response = await fetch(apiUrl + `?page=${page}&limit=${limit}`, {
         method: "GET",
         headers: { "content-type": "application/json" },
@@ -44,8 +48,6 @@ function App() {
       const data = await response.json();
       const usersCopy = [...users];
       const index = users.findIndex((user) => user.id === id);
-      // const newUser = users[index];
-      // newUser.isFollowing = data.isFollowing;
       usersCopy[index] = data;
       setUsers(usersCopy);
     } catch (err) {
@@ -113,16 +115,18 @@ function App() {
   }, []);
 
   return (
-    <div className="App">
-      {loading && <p>Loading</p>}
-      {!loading && !error && (
+    <Container>
+      {!error && users && (
         <UserList users={users} changeFollowing={changeFollowing} />
       )}
       {error && <p>{error}</p>}
-      {Math.ceil(UserCount / limit) >= page && (
-        <button onClick={() => fetchUserData()}>Load more</button>
+      {!loading && Math.ceil(UserCount / limit) >= page && (
+        <LoadMoreButton onClick={() => fetchUserData()}>
+          Load more
+        </LoadMoreButton>
       )}
-    </div>
+      {loading && <Loader />}
+    </Container>
   );
 }
 
