@@ -1,5 +1,6 @@
 import { Container } from "./Container/Container";
 import { useEffect, useState } from "react";
+import { Dropdown } from "./Dropdown/Dropdown";
 import { UserList } from "./UserList/UserList";
 import { LoadMoreButton } from "./LoadMoreButton/LoadMoreButton";
 import { Loader } from "./Loader/Loader";
@@ -103,10 +104,25 @@ function App() {
       });
   };
 
+  const changeFilter = (filter) => {
+    if (filter === "follow") {
+      setFilteredUsers(users.filter((user) => user.isFollowing === false));
+
+      return;
+    }
+    if (filter === "followings") {
+      setFilteredUsers(users.filter((user) => user.isFollowing === true));
+
+      return;
+    }
+    setFilteredUsers(null);
+  };
+
   const [users, setUsers] = useState(null);
+  const [filteredUsers, setFilteredUsers] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [UserCount, setUserCount] = useState(null);
+  const [userCount, setUserCount] = useState(null);
   const [page, setPage] = useState(1);
 
   useEffect(() => {
@@ -117,10 +133,17 @@ function App() {
   return (
     <Container>
       {!error && users && (
-        <UserList users={users} changeFollowing={changeFollowing} />
+        <>
+          <Dropdown changeFilter={changeFilter} />
+          {filteredUsers ? (
+            <UserList users={filteredUsers} changeFollowing={changeFollowing} />
+          ) : (
+            <UserList users={users} changeFollowing={changeFollowing} />
+          )}
+        </>
       )}
       {error && <p>{error}</p>}
-      {!loading && Math.ceil(UserCount / limit) >= page && (
+      {!loading && !filteredUsers && Math.ceil(userCount / limit) >= page && (
         <LoadMoreButton onClick={() => fetchUserData()}>
           Load more
         </LoadMoreButton>
