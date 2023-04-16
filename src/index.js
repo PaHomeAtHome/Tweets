@@ -18,7 +18,7 @@ const router = createBrowserRouter(
       errorElement: <Error />,
     },
     {
-      path: "/cards",
+      path: "/tweets",
       element: <App />,
     },
     {
