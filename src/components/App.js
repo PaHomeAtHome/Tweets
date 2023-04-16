@@ -1,6 +1,7 @@
 import { Container } from "./Container/Container";
 import { useEffect, useState } from "react";
 import { Dropdown } from "./Dropdown/Dropdown";
+import { HomeLink } from "./HomeLink/HomeLink";
 import { UserList } from "./UserList/UserList";
 import { LoadMoreButton } from "./LoadMoreButton/LoadMoreButton";
 import { Loader } from "./Loader/Loader";
@@ -196,10 +197,12 @@ function App() {
 
   return (
     <Container>
+      <HomeLink />
       {error && <Alert>{error}</Alert>}
       {!error && (
         <>
           <Dropdown changeFilter={changeFilter} fetchUserData={fetchUserData} />
+
           {users && !filter && (
             <UserList users={users} changeFollowing={changeFollowing} />
           )}

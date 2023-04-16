@@ -3,12 +3,14 @@ import ReactDOM from "react-dom/client";
 import "./index.css";
 import App from "./components/App";
 import { Home } from "./components/Home/Home";
+import Error from "./components/Error/Error";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
 const router = createBrowserRouter([
   {
     path: "/",
     element: <Home>Hello world!</Home>,
+    errorElement: <Error />,
   },
   {
     path: "/tweets",

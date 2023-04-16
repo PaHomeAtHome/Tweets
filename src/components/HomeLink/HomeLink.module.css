@@ -1,12 +1,3 @@
-.home {
-  width: 100%;
-  height: 100vh;
-  background-color: #ebd8ff;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
 .link {
   width: 196px;
   height: 50px;
@@ -14,22 +5,23 @@
   border-radius: 10.3108px;
   border: none;
   text-decoration: none;
-  padding: 20px;
+  padding: 10px;
   display: flex;
   align-items: center;
   justify-content: center;
+  margin-bottom: 20px;
 
   color: #373737;
   font-family: "Montserrat", sans-serif;
   font-style: normal;
   font-weight: 600;
-  font-size: 44px;
+  font-size: 30px;
   text-transform: uppercase;
   transition: 0.3s;
 }
 
 .link:hover {
-  background: #897ddb;
+  background: #331aa0;
   color: white;
   cursor: pointer;
 }
