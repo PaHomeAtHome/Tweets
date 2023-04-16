@@ -216,24 +216,28 @@ function App() {
     return () => {
       mountedRef.current = true;
     };
+    // eslint-disable-next-line
   }, []);
 
   useEffect(() => {
     if (mountedRef.current === true) {
       fetchUserData();
     }
+    // eslint-disable-next-line
   }, [page]);
 
   useEffect(() => {
     if (mountedRef.current === true) {
       fetchUserData("following");
     }
+    // eslint-disable-next-line
   }, [followingPage]);
 
   useEffect(() => {
     if (mountedRef.current === true) {
       fetchUserData("follow");
     }
+    // eslint-disable-next-line
   }, [followPage]);
 
   return (
