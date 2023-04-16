@@ -1,7 +1,9 @@
 name: Build and deploy to GitHub Pages
 
 on:
-  push:
+  [push]:
+  permissions:
+  contents: write
     branches: [main]
 
 jobs:
@@ -18,5 +20,6 @@ jobs:
           npm run build
       - name: Deploy 🚀
         uses: JamesIves/github-pages-deploy-action@v4
+        with:
           branch: gh-pages
           folder: build
