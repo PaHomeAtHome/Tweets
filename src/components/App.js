@@ -4,6 +4,7 @@ import { Dropdown } from "./Dropdown/Dropdown";
 import { UserList } from "./UserList/UserList";
 import { LoadMoreButton } from "./LoadMoreButton/LoadMoreButton";
 import { Loader } from "./Loader/Loader";
+import { Alert } from "./Alert/Alert";
 const apiUrl = "https://6436fa4b3e4d2b4a12e09fd0.mockapi.io/api/users";
 
 function App() {
@@ -193,7 +194,7 @@ function App() {
 
   return (
     <Container>
-      {error && <p>{error}</p>}
+      {error && <Alert>{error}</Alert>}
       {!error && (
         <>
           <Dropdown changeFilter={changeFilter} fetchUserData={fetchUserData} />
@@ -248,10 +249,10 @@ function App() {
         </>
       )}
       {filter === "following" && followingUserCount <= 0 && (
-        <p>Theare are noone in followings</p>
+        <Alert>Theare are noone in followings</Alert>
       )}
       {filter === "follow" && followUserCount <= 0 && (
-        <p>Theare are noone to follow</p>
+        <Alert>Theare are noone to follow</Alert>
       )}
       {loading && <Loader />}
     </Container>
