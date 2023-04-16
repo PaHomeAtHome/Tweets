@@ -9,10 +9,22 @@ const apiUrl = "https://6436fa4b3e4d2b4a12e09fd0.mockapi.io/api/users";
 function App() {
   const limit = 9;
 
-  const fetchUserData = async () => {
+  const fetchUserData = async (filter) => {
+    let url = null;
+    switch (filter) {
+      case "following":
+        url = apiUrl + `?page=${followingPage}&limit=${limit}&isFollowing=true`;
+        break;
+      case "follow":
+        url = apiUrl + `?page=${followPage}&limit=${limit}&isFollowing=false`;
+        break;
+      default:
+        url = apiUrl + `?page=${page}&limit=${limit}`;
+    }
+
     try {
       setLoading(true);
-      const response = await fetch(apiUrl + `?page=${page}&limit=${limit}`, {
+      const response = await fetch(url, {
         method: "GET",
         headers: { "content-type": "application/json" },
       });
@@ -22,10 +34,20 @@ function App() {
         );
       }
       const data = await response.json();
-      !users
-        ? setUsers(data)
-        : setUsers((prevState) => [...prevState, ...data]);
-      setPage(page + 1);
+      if (data) {
+        switch (filter) {
+          case "following":
+            setFollowingUsers(data);
+            break;
+          case "follow":
+            setFollowUsers(data);
+            break;
+          default:
+            !users
+              ? setUsers(data)
+              : setUsers((prevState) => [...prevState, ...data]);
+        }
+      }
       setError(null);
     } catch (err) {
       setError(err.message);
@@ -48,9 +70,32 @@ function App() {
 
       const data = await response.json();
       const usersCopy = [...users];
-      const index = users.findIndex((user) => user.id === id);
-      usersCopy[index] = data;
+      const userIndex = users.findIndex((user) => user.id === id);
+
+      usersCopy[userIndex] = data;
       setUsers(usersCopy);
+      switch (data.isFollowing) {
+        case true:
+          if (followUsers) {
+            const followUsersCopy = [...followUsers];
+            const followUserIndex = followUsers.findIndex(
+              (user) => user.id === data.id
+            );
+            followUsersCopy.splice(followUserIndex, 1);
+            setFollowUsers(followUsersCopy);
+          }
+          break;
+        case false:
+          if (followingUsers) {
+            const followingUsersCopy = [...followingUsers];
+            const followingUserIndex = followingUsers.findIndex(
+              (user) => user.id === data.id
+            );
+            followingUsersCopy.splice(followingUserIndex, 1);
+            setFollowingUsers(followingUsersCopy);
+          }
+          break;
+      }
     } catch (err) {
       setError(err.message);
     } finally {
@@ -71,13 +116,19 @@ function App() {
       }
       const data = await response.json();
       setUserCount(data.length);
+      setFollowUserCount(
+        data.filter((user) => user.isFollowing === false).length
+      );
+      setFollowingUserCount(
+        data.filter((user) => user.isFollowing === true).length
+      );
     } catch (err) {
       console.log(err);
       setUserCount(null);
     }
   };
 
-  const changeFollowing = (isFollowing, id, followers) => {
+  const changeFollowing = async (isFollowing, id, followers) => {
     fetch(apiUrl + `/${id}`, {
       method: "PUT",
       headers: {
@@ -92,12 +143,11 @@ function App() {
         if (res.ok) {
           return res.json();
         }
-        throw new Error(
-          `This is an HTTP error: The status is ${response.status}`
-        );
+        throw new Error(`This is an HTTP error: The status is ${res.status}`);
       })
       .then(() => {
         updateUser(id);
+        getUserCount();
       })
       .catch((error) => {
         console.log(error);
@@ -105,25 +155,36 @@ function App() {
   };
 
   const changeFilter = (filter) => {
-    if (filter === "follow") {
-      setFilteredUsers(users.filter((user) => user.isFollowing === false));
-
-      return;
+    switch (filter) {
+      case "following":
+        setFilter("following");
+        if (!followingUsers) {
+          fetchUserData("following");
+        }
+        break;
+      case "follow":
+        setFilter("follow");
+        if (!followUsers) {
+          fetchUserData("follow");
+        }
+        break;
+      default:
+        setFilter(null);
     }
-    if (filter === "followings") {
-      setFilteredUsers(users.filter((user) => user.isFollowing === true));
-
-      return;
-    }
-    setFilteredUsers(null);
   };
 
   const [users, setUsers] = useState(null);
-  const [filteredUsers, setFilteredUsers] = useState(null);
+  const [followUsers, setFollowUsers] = useState(null);
+  const [followingUsers, setFollowingUsers] = useState(null);
+  const [userCount, setUserCount] = useState(null);
+  const [filter, setFilter] = useState(null);
+  const [page, setPage] = useState(1);
+  const [followUserCount, setFollowUserCount] = useState(null);
+  const [followingUserCount, setFollowingUserCount] = useState(null);
+  const [followPage, setFollowPage] = useState(1);
+  const [followingPage, setFollowingPage] = useState(1);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [userCount, setUserCount] = useState(null);
-  const [page, setPage] = useState(1);
 
   useEffect(() => {
     fetchUserData();
@@ -132,21 +193,65 @@ function App() {
 
   return (
     <Container>
-      {!error && users && (
+      {error && <p>{error}</p>}
+      {!error && (
         <>
-          <Dropdown changeFilter={changeFilter} />
-          {filteredUsers ? (
-            <UserList users={filteredUsers} changeFollowing={changeFollowing} />
-          ) : (
+          <Dropdown changeFilter={changeFilter} fetchUserData={fetchUserData} />
+          {users && !filter && (
             <UserList users={users} changeFollowing={changeFollowing} />
           )}
+          {!filter && !loading && Math.ceil(userCount / limit) >= page && (
+            <LoadMoreButton
+              onClick={() => {
+                fetchUserData();
+                setPage(page + 1);
+              }}
+            >
+              Load more
+            </LoadMoreButton>
+          )}
+          {followUsers && filter === "follow" && (
+            <UserList users={followUsers} changeFollowing={changeFollowing} />
+          )}
+          {filter === "follow" &&
+            !loading &&
+            Math.ceil(followUserCount / limit) >= followPage &&
+            followUserCount > 9 && (
+              <LoadMoreButton
+                onClick={() => {
+                  fetchUserData("follow");
+                  setFollowPage(followPage + 1);
+                }}
+              >
+                Load more
+              </LoadMoreButton>
+            )}
+          {followingUsers && filter === "following" && (
+            <UserList
+              users={followingUsers}
+              changeFollowing={changeFollowing}
+            />
+          )}
+          {filter === "following" &&
+            !loading &&
+            Math.ceil(followingUserCount / limit) >= followingPage &&
+            followingUserCount > 9 && (
+              <LoadMoreButton
+                onClick={() => {
+                  fetchUserData("following");
+                  setFollowingPage(followingPage + 1);
+                }}
+              >
+                Load more
+              </LoadMoreButton>
+            )}
         </>
       )}
-      {error && <p>{error}</p>}
-      {!loading && !filteredUsers && Math.ceil(userCount / limit) >= page && (
-        <LoadMoreButton onClick={() => fetchUserData()}>
-          Load more
-        </LoadMoreButton>
+      {filter === "following" && followingUserCount <= 0 && (
+        <p>Theare are noone in followings</p>
+      )}
+      {filter === "follow" && followUserCount <= 0 && (
+        <p>Theare are noone to follow</p>
       )}
       {loading && <Loader />}
     </Container>
