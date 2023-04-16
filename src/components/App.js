@@ -242,7 +242,13 @@ function App() {
       {error && <Alert>{error}</Alert>}
       {!error && (
         <>
-          <Dropdown changeFilter={changeFilter} fetchUserData={fetchUserData} />
+          <Dropdown
+            changeFilter={changeFilter}
+            fetchUserData={fetchUserData}
+            followingUserCount={followingUserCount}
+            followUserCount={followUserCount}
+            limit={limit}
+          />
           {users && !filter && (
             <UserList users={users} changeFollowing={changeFollowing} />
           )}
