@@ -18,7 +18,7 @@ const router = createBrowserRouter([
     basename: "/tweets/",
   },
   {
-    path: "/tweets",
+    path: "/cards",
     element: <App />,
   },
   {
