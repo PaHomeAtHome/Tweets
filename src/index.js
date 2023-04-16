@@ -10,22 +10,24 @@ import {
   Navigate,
 } from "react-router-dom";
 
-const router = createBrowserRouter([
-  {
-    path: "/",
-    element: <Home />,
-    errorElement: <Error />,
-    basename: "/tweets",
-  },
-  {
-    path: "/cards",
-    element: <App />,
-  },
-  {
-    path: "*",
-    element: <Navigate to="/" replace />,
-  },
-]);
+const router = createBrowserRouter(
+  [
+    {
+      path: "/",
+      element: <Home />,
+      errorElement: <Error />,
+    },
+    {
+      path: "/cards",
+      element: <App />,
+    },
+    {
+      path: "*",
+      element: <Navigate to="/" replace />,
+    },
+  ],
+  { basename: "/tweets" }
+);
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
