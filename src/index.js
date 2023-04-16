@@ -26,7 +26,7 @@ const router = createBrowserRouter(
       element: <Navigate to="/" replace />,
     },
   ],
-  { basename: "/tweets" }
+  { basename: "/tweets/" }
 );
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
