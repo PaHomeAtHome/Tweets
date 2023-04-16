@@ -17,7 +17,6 @@ jobs:
           npm run lint:js
           npm run build
       - name: Deploy 🚀
-        uses: christopherdavenport/create-ghpages-ifnotexists@v1
         uses: JamesIves/github-pages-deploy-action@v4
           branch: gh-pages
           folder: build
