@@ -7,7 +7,7 @@ export const UserListComponent = ({ userInfo, changeFollowing }) => {
   return (
     <li key={id} className={css.card}>
       <ReactLogo className={css.logo} />
-      <img src={picture_2x} alt="card background picture" />
+      <img src={picture_2x} alt="card background" />
       <div className={css.line}></div>
       <div className={css.ellipse}></div>
       <img src={avatar} alt={`${user} avatar`} className={css.avatar} />

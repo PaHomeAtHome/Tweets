@@ -96,6 +96,8 @@ function App() {
             setFollowingUsers(followingUsersCopy);
           }
           break;
+        default:
+          break;
       }
     } catch (err) {
       setError(err.message);
