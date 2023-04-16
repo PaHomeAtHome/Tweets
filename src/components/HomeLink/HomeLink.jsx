@@ -4,7 +4,7 @@ import css from "./HomeLink.module.css";
 export const HomeLink = () => {
   return (
     <Link to={`/`} className={css.link}>
-      Home
+      Back
     </Link>
   );
 };

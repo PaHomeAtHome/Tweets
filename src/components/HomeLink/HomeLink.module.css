@@ -11,7 +11,8 @@
   justify-content: center;
   margin-bottom: 20px;
 
-  color: #373737;
+  background-color: #897ddb;
+  color: white;
   font-family: "Montserrat", sans-serif;
   font-style: normal;
   font-weight: 600;
@@ -22,6 +23,5 @@
 
 .link:hover {
   background: #331aa0;
-  color: white;
   cursor: pointer;
 }

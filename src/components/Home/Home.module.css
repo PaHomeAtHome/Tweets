@@ -1,10 +1,10 @@
 .home {
   width: 100%;
   height: 100vh;
-  background-color: #ebd8ff;
   display: flex;
   justify-content: center;
   align-items: center;
+  background-color: #efe1fd;
 }
 
 .link {
@@ -19,7 +19,8 @@
   align-items: center;
   justify-content: center;
 
-  color: #373737;
+  background-color: #897ddb;
+  color: white;
   font-family: "Montserrat", sans-serif;
   font-style: normal;
   font-weight: 600;
@@ -29,7 +30,6 @@
 }
 
 .link:hover {
-  background: #897ddb;
-  color: white;
+  background-color: #331aa0;
   cursor: pointer;
 }

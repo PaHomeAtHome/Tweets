@@ -5,7 +5,7 @@ export const Home = () => {
   return (
     <div className={css.home}>
       <Link to={`/tweets`} className={css.link}>
-        Home
+        Tweets
       </Link>
     </div>
   );
