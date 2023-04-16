@@ -1,5 +1,5 @@
 import { Container } from "./Container/Container";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { Dropdown } from "./Dropdown/Dropdown";
 import { HomeLink } from "./HomeLink/HomeLink";
 import { UserList } from "./UserList/UserList";
@@ -39,10 +39,24 @@ function App() {
       if (data) {
         switch (filter) {
           case "following":
-            setFollowingUsers(data);
+            if (!followingUsers) {
+              setFollowingUsers(data);
+            }
+            if (followingUsers) {
+              followingUserCount <= limit
+                ? setFollowingUsers(data)
+                : setFollowingUsers((prevState) => [...prevState, ...data]);
+            }
             break;
           case "follow":
-            setFollowUsers(data);
+            if (!followUsers) {
+              setFollowUsers(data);
+            }
+            if (followUsers) {
+              followUserCount <= limit
+                ? setFollowUsers(data)
+                : setFollowUsers((prevState) => [...prevState, ...data]);
+            }
             break;
           default:
             !users
@@ -86,6 +100,7 @@ function App() {
             followUsersCopy.splice(followUserIndex, 1);
             setFollowUsers(followUsersCopy);
           }
+
           break;
         case false:
           if (followingUsers) {
@@ -96,6 +111,7 @@ function App() {
             followingUsersCopy.splice(followingUserIndex, 1);
             setFollowingUsers(followingUsersCopy);
           }
+
           break;
         default:
           break;
@@ -177,6 +193,8 @@ function App() {
     }
   };
 
+  const mountedRef = useRef(false);
+
   const [users, setUsers] = useState(null);
   const [followUsers, setFollowUsers] = useState(null);
   const [followingUsers, setFollowingUsers] = useState(null);
@@ -191,9 +209,32 @@ function App() {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    fetchUserData();
-    getUserCount();
+    if (mountedRef.current === true) {
+      fetchUserData();
+      getUserCount();
+    }
+    return () => {
+      mountedRef.current = true;
+    };
   }, []);
+
+  useEffect(() => {
+    if (mountedRef.current === true) {
+      fetchUserData();
+    }
+  }, [page]);
+
+  useEffect(() => {
+    if (mountedRef.current === true) {
+      fetchUserData("following");
+    }
+  }, [followingPage]);
+
+  useEffect(() => {
+    if (mountedRef.current === true) {
+      fetchUserData("follow");
+    }
+  }, [followPage]);
 
   return (
     <Container>
@@ -202,17 +243,11 @@ function App() {
       {!error && (
         <>
           <Dropdown changeFilter={changeFilter} fetchUserData={fetchUserData} />
-
           {users && !filter && (
             <UserList users={users} changeFollowing={changeFollowing} />
           )}
-          {!filter && !loading && Math.ceil(userCount / limit) >= page && (
-            <LoadMoreButton
-              onClick={() => {
-                fetchUserData();
-                setPage(page + 1);
-              }}
-            >
+          {!filter && !loading && Math.ceil(userCount / limit) > page && (
+            <LoadMoreButton onClick={() => setPage(page + 1)}>
               Load more
             </LoadMoreButton>
           )}
@@ -221,14 +256,9 @@ function App() {
           )}
           {filter === "follow" &&
             !loading &&
-            Math.ceil(followUserCount / limit) >= followPage &&
-            followUserCount > 9 && (
-              <LoadMoreButton
-                onClick={() => {
-                  fetchUserData("follow");
-                  setFollowPage(followPage + 1);
-                }}
-              >
+            Math.ceil(followUserCount / limit) > followPage &&
+            followUserCount > limit && (
+              <LoadMoreButton onClick={() => setFollowPage(followPage + 1)}>
                 Load more
               </LoadMoreButton>
             )}
@@ -240,13 +270,10 @@ function App() {
           )}
           {filter === "following" &&
             !loading &&
-            Math.ceil(followingUserCount / limit) >= followingPage &&
-            followingUserCount > 9 && (
+            Math.ceil(followingUserCount / limit) > followingPage &&
+            followingUserCount > limit && (
               <LoadMoreButton
-                onClick={() => {
-                  fetchUserData("following");
-                  setFollowingPage(followingPage + 1);
-                }}
+                onClick={() => setFollowingPage(followingPage + 1)}
               >
                 Load more
               </LoadMoreButton>
