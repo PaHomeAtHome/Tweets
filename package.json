@@ -1,7 +1,7 @@
 {
   "name": "tweets",
   "version": "0.1.0",
-  "homepage": "https://PaHomeAtHome.github.io/tweets",
+  "homepage": "https://PaHomeAtHome.github.io/tweets/",
   "private": true,
   "dependencies": {
     "eslint": "^8.38.0",
