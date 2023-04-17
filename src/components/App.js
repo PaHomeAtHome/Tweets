@@ -1,5 +1,5 @@
 import { Container } from "./Container/Container";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 import { Dropdown } from "./Dropdown/Dropdown";
 import { HomeLink } from "./HomeLink/HomeLink";
 import { UserList } from "./UserList/UserList";
@@ -193,8 +193,6 @@ function App() {
     }
   };
 
-  const mountedRef = useRef(false);
-
   const [users, setUsers] = useState(null);
   const [followUsers, setFollowUsers] = useState(null);
   const [followingUsers, setFollowingUsers] = useState(null);
@@ -209,34 +207,27 @@ function App() {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    if (mountedRef.current === true) {
-      fetchUserData();
-      getUserCount();
-    }
-    return () => {
-      mountedRef.current = true;
-    };
+    fetchUserData();
+    getUserCount();
+
     // eslint-disable-next-line
   }, []);
 
   useEffect(() => {
-    if (mountedRef.current === true) {
-      fetchUserData();
-    }
+    fetchUserData();
+
     // eslint-disable-next-line
   }, [page]);
 
   useEffect(() => {
-    if (mountedRef.current === true) {
-      fetchUserData("following");
-    }
+    fetchUserData("following");
+
     // eslint-disable-next-line
   }, [followingPage]);
 
   useEffect(() => {
-    if (mountedRef.current === true) {
-      fetchUserData("follow");
-    }
+    fetchUserData("follow");
+
     // eslint-disable-next-line
   }, [followPage]);
 
