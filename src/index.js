@@ -2,7 +2,7 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import "./index.css";
 import App from "./components/App";
-import { Home } from "./components/Home/Home";
+import { Home } from "./pages/Home/Home";
 import Error from "./components/Error/Error";
 import {
   createBrowserRouter,
@@ -26,14 +26,12 @@ const router = createBrowserRouter(
       element: <Navigate to="/" replace />,
     },
   ],
-  { basename: "/tweets/" }
+  { basename: "/tweets" }
 );
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
-    <RouterProvider router={router}>
-      <App />
-    </RouterProvider>
+    <RouterProvider router={router} />
   </React.StrictMode>
 );
