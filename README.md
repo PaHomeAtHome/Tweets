@@ -31,6 +31,8 @@ Get all users
 
 Get specific user by ID
 
+#### Change item
+
 ```http
   PUT /api/users/${id}
 ```
@@ -40,6 +42,8 @@ Get specific user by ID
 | `id`      | `string` | **Required**. Id of item to change     |
 | `method`  | `string` | **Required**. "PUT"                    |
 | `body`    | `object` | **Required**. Object entries to change |
+
+Change specific user data by ID
 
 ## Authors
 
