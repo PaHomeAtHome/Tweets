@@ -8,7 +8,7 @@ GoIT team ❤️: https://goit.global/ua/
 
 ## API Reference
 
-#### Get all items
+#### Get all users
 
 ```http
   GET /api/users
@@ -19,7 +19,7 @@ GoIT team ❤️: https://goit.global/ua/
 
 Get all users
 
-#### Get item
+#### Get user
 
 ```http
   GET /api/users/${id}
@@ -31,7 +31,7 @@ Get all users
 
 Get specific user by ID
 
-#### Change item
+#### Change user
 
 ```http
   PUT /api/users/${id}
